@@ -19,7 +19,7 @@ export const installGo = async (version: string = "1.9"): Promise<void> => {
             if(!err) throw new Error(res)
         }).catch(err => {throw new Error(err)})
     spin.update({text:"Installing downloaded golang..."})
-    await terminal(`tar -C /usr/local -xzf "go$ver.linux-amd64.tar.gz"`)
+    await terminal(`tar -C /usr/local -xzf "go${version}.linux-amd64.tar.gz"`)
         .then(([res , err]) => {
             if(!err) throw new Error(res)
         }).catch(err => {throw new Error(err)})
