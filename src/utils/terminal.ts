@@ -15,9 +15,9 @@ export const run = async (cmd : string , show: boolean = false) : Promise<[strin
                 console.log(opt.stderr);
             }
             // if got error return false
-            if(opt.error) resolve([`Successfully install golang`,false]);
+            if(opt.error) resolve([`Failed running "${cmd}"`,false]);
             // if not return true
-            resolve([`Successfully install golang`,true]);
+            resolve([`Successfully running "${cmd}"`,true]);
         }else {
             // got empty string , come to this.
             reject(`Got empty string`)
