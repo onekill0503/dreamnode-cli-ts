@@ -1,8 +1,6 @@
-import { rejects } from 'assert'
 import { SpawnSyncReturns, spawnSync } from 'child_process'
-import { resolve } from 'path'
 
-export const run = async (cmd : string) : Promise<[string , boolean]> => {
+export const run = async (cmd : string , show: boolean = false) : Promise<[string , boolean]> => {
     return await new Promise(async (resolve , reject) => {
         if(cmd.length > 0){
             // get command argument
@@ -12,8 +10,10 @@ export const run = async (cmd : string) : Promise<[string , boolean]> => {
             cmdArgs.shift();
             let opt : SpawnSyncReturns<string | Buffer> = await spawnSync(mainCmd , cmdArgs , { encoding: 'utf-8' , shell:true})
             // print output from command
-            console.log(opt.stdout);
-            console.log(opt.stderr);
+            if(show){
+                console.log(opt.stdout);
+                console.log(opt.stderr);
+            }
             // if got error return false
             if(opt.error) resolve([`Successfully install golang`,false]);
             // if not return true

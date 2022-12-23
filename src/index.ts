@@ -1,10 +1,13 @@
 #!/usr/bin/env node
-import { isDepedencyInstalled , installGo } from './utils/validation'
+import { isDepedencyInstalled } from './utils/validation'
+import { installGo } from './utils/installs/golang'
 import chalk from 'chalk'
 import inquirer from 'inquirer'
+import installBasic from './utils/installs/basic'
 
 (async () => {
-    await isDepedencyInstalled()
+    await installBasic();
+    await isDepedencyInstalled(`go`)
         .then((res: boolean) => {
 
         }).catch(async (err: string) => {
@@ -15,7 +18,11 @@ import inquirer from 'inquirer'
                 name: `answer`
             })
             if(installQ.answer){
-                await installGo();
+                try{
+                    await installGo();
+                }catch(err){
+                    process.exit(0);
+                }
             }
         })
 })()
