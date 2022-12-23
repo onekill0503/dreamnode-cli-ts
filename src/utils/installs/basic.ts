@@ -1,18 +1,18 @@
 import { run as terminal } from "../terminal";
 import { createSpinner as spinner} from 'nanospinner'
 
-const install = () => {
+const install = async () => {
     // create loading spinner
     let spin = spinner(`Installing basic depedency...`).start();
-    terminal(`apt update`)
+    await terminal(`apt update`)
         .then(([res , err]) => {
             if(!err) throw new Error(res)
         }).catch(err => {throw new Error(err)})
-    terminal(`apt upgrade -y`)
+    await terminal(`apt upgrade -y`)
         .then(([res , err]) => {
             if(!err) throw new Error(res)
         }).catch(err => {throw new Error(err)})
-    terminal(`apt install curl build-essential git wget jq make gcc tmux chrony -y`)
+    await terminal(`apt install curl build-essential git wget jq make gcc tmux chrony -y`)
         .then(([res , err]) => {
             if(!err) throw new Error(res)
         }).catch(err => {throw new Error(err)})
