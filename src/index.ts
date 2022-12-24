@@ -6,6 +6,7 @@ import { getNodeList } from './utils/fetch'
 import { searchValueFromArray as getData } from './utils'
 import Project from './models/project'
 import ibc from './nodes/ibc'
+import NODE from './enums/node'
 
 (async () => {
     await installBasic();
@@ -28,10 +29,10 @@ import ibc from './nodes/ibc'
     }
     // switch case for selected node
     switch(nodeData?.node_type){
-        case "ibc":
+        case NODE.IBC:
             await ibc(nodeData)
         default:
-            console.log(`No option for selected node !`)
+            console.log(chalk.red(`No option for selected node !`))
             process.exit(0);
     }
 })()
