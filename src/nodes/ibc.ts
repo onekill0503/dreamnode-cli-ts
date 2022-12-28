@@ -8,13 +8,12 @@ import chalk from "chalk";
 import { runSpawn as cmd } from "../utils/terminal"
 import axios from "axios";
 import { readToml, writeToml } from "../utils";
+import { getPeers } from "../utils/fetch";
+import { install as stateSync } from "../utils/installs/stateSync";
 
-const getPeers = async (url: string): Promise<any> => {
-    const peers: string = await axios.get(url).then((res: any) => res.data.replace(/(\n)/g , ","))
-    return peers;
-}
 const configureNodeConfig = async (file: string , node: Project , port: number) : Promise<void> => {
     let tomlData = await readToml(file);
+    if(tomlData == '') throw new Error(`Failed read config.toml`)
     tomlData.p2p.persistent_peers = await getPeers(node.peers);
     tomlData.rpc.laddr = `tcp://0.0.0.0:${port}`;
     tomlData.rpc.cors_allowed_origins = ["*"]
@@ -31,6 +30,7 @@ const configureNodeConfig = async (file: string , node: Project , port: number) 
 }
 const configureNodeApp = async (file: string , node: Project) : Promise<void> => {
     let appData = await readToml(file);
+    if(appData == '') throw new Error(`Failed read app.toml`)
     const newConfig = await axios.get(node.repo.config.configUrl)
         .then(res => {
             if(res?.data) return res.data
@@ -106,22 +106,47 @@ const IBC = async (node: Project , nodename: string , port: number): Promise<voi
                         }
                     }
                 });
+            await cmd(`cd $HOME && git clone ${node.repo.url}` , spin);
+            await cmd(`cd $HOME/humans && git checkout ${node.repo.branch}`);
+            node.repo.buildCmd.map(async (c: string) => {
+                await cmd(c , spin);
+            });
         }
-        spin.update({text: chalk.yellow("Node Initialization...")})
-        await cmd(`${binaryName} config chain-id ${node.chain} && ${binaryName} config keyring-backend test` , spin);
-        await cmd(`${binaryName} init ${nodename} --chain-id ${node.chain}`)
-        await cmd(`curl ${node.repo.genesis} | jq .result.genesis > ~/.${nodeDir}/config/genesis.json` , spin)
-        await cmd(`cp $HOME/.${nodeDir}/config/config.toml $HOME/.${nodeDir}/config/config.toml.backup`)
-        // configuration server
-        spin.update({text: chalk.yellow("Configuration Node ...")})
-        await configureNodeConfig(`${process.env.HOME}/.${nodeDir}/config/config.toml` , node , port);
-        await configureNodeApp(`${process.env.HOME}/.${nodeDir}/config/app.toml` , node);
+        try{
+            spin.update({text: chalk.yellow("Node Initialization...")})
+            await cmd(`${binaryName} config chain-id ${node.chain} && ${binaryName} config keyring-backend test` , spin);
+            await cmd(`${binaryName} init ${nodename} --chain-id ${node.chain}`)
+            await cmd(`curl ${node.repo.genesis} | jq .result.genesis > ~/.${nodeDir}/config/genesis.json` , spin)
+            await cmd(`cp $HOME/.${nodeDir}/config/config.toml $HOME/.${nodeDir}/config/config.toml.backup`)
+            // configuration server
+            spin.update({text: chalk.yellow("Configuration Node ...")})
+            await configureNodeConfig(`${process.env.HOME}/.${nodeDir}/config/config.toml` , node , port);
+            await configureNodeApp(`${process.env.HOME}/.${nodeDir}/config/app.toml` , node);
+        }catch(err: any) {
+            spin.error({text: err.message});
+            process.exit(0);
+        }
         spin.update({text: chalk.yellow("Create Node Service...")})
         const createServiceRes: any = await createService(binaryName , nodeDir);
         if(!createServiceRes){
             spin.error({text:chalk.red(`Failed install ${node.name} Service`)});       
         }else{
             spin.success({text:chalk.green(`Successfully Installing ${node.name}`)});
+        }
+        if(node.repo.stateSync){
+            const ssQ = await inquirer.prompt({
+                type: 'confirm',
+                message: `State Sync is available for this node. do you want to install it ?`,
+                name: `answer`
+            });
+            if(ssQ.answer){
+                try{
+                    await stateSync(node , binaryName , nodeDir , spin);
+                }catch(err: any) {
+                    spin.error({text: err.message});
+                    process.exit(0);
+                }
+            }
         }
     })
 }

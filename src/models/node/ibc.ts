@@ -1,7 +1,7 @@
 
 class Config {
-    private _configUrl: string;
-    private _appUrl: string;
+    private _configUrl  : string;
+    private _appUrl     : string;
 
     constructor(config: string , app: string){
         this._appUrl = app;
@@ -22,29 +22,42 @@ class Config {
 }
 
 class IBC {
-    private _url: string;
-    private _branch: string;
-    private _stateSync: boolean;
-    private _build: boolean;
-    private _rpc?: string;
-    private _dir?: string;
-    private _genesis: string;
-    private _config: Config;
+    private _url        : string;
+    private _branch?    : string;
+    private _stateSync  : boolean;
+    private _build      : boolean;
+    private _rpc?       : string;
+    private _dir?       : string;
+    private _genesis    : string;
+    private _config     : Config;
+    private _buildCmd   : string[] = [];
 
-    constructor(url: string , branch: string , stateSync:boolean , build: boolean , rpc: string , dir: string , genesis: string , config: Config){
-        this._url = url;
-        this._branch = branch;
+    constructor
+    (
+        url         : string,
+        branch      : string,
+        stateSync   : boolean,
+        build       : boolean,
+        rpc         : string,
+        dir         : string,
+        genesis     : string,
+        config      : Config,
+        buildCmd    : string[]
+    ){
+        this._url       = url;
+        this._branch    = branch;
         this._stateSync = stateSync;
-        this._build = build;
-        this._rpc = rpc;
-        this._dir = dir;
-        this._genesis = genesis;
-        this._config = config;
+        this._build     = build;
+        this._rpc       = rpc;
+        this._dir       = dir;
+        this._genesis   = genesis;
+        this._config    = config;
+        this._buildCmd  = buildCmd;
     }
     set url(arg: string){
         this._url = arg;
     }
-    set branch(arg: string){
+    set branch(arg: string | undefined){
         this._branch = arg;
     }
     set stateSync(arg: boolean){
@@ -65,14 +78,21 @@ class IBC {
     set config(arg: Config){
         this._config = arg;
     }
+    set buildCmd(arg: string[]){
+        this._buildCmd = arg || [];
+    }
+
     get url(): string {
         return this._url;
     }
-    get branch(): string {
+    get branch(): string | undefined{
         return this._branch;
     }
     get stateSync(): boolean {
         return this._stateSync;
+    }
+    get build(): boolean {
+        return this._build;
     }
     get rpc(): string | undefined{
         return this._rpc;
@@ -85,6 +105,9 @@ class IBC {
     }
     get config(): Config {
         return this._config;
+    }
+    get buildCmd(): string[] {
+        return this._buildCmd;
     }
 }
 export default IBC;

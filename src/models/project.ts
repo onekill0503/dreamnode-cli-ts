@@ -1,17 +1,24 @@
 import IBC from "./node/ibc";
 
 class Project {
-    private _name: string;
-    private _chain : string;
-    private _repo: IBC;
-    private _peers: string;
-    private _node_type: string;
+    private _name       : string;
+    private _chain      : string;
+    private _repo       : IBC;
+    private _peers      : string;
+    private _node_type  : string;
 
-    constructor(name:string,chain: string,repo: IBC,peers: string , node_type:string , stateSync: string){
-        this._name = name;
-        this._chain = chain;
-        this._repo = repo;
-        this._peers = peers;
+    constructor
+    (
+        name        : string,
+        chain       : string,
+        repo        : IBC,
+        peers       : string,
+        node_type   : string
+    ){
+        this._name      = name;
+        this._chain     = chain;
+        this._repo      = repo;
+        this._peers     = peers;
         this._node_type = node_type;
     }
 
@@ -30,6 +37,7 @@ class Project {
     set node_type(arg: string){
         this._node_type = arg;
     }
+
     get name(): string {
         return this._name;
     }

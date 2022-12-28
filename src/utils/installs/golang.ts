@@ -29,9 +29,11 @@ export const installGo = async (version: string = "1.9"): Promise<void> => {
             if(!err) throw new Error(res)
         }).catch(err => {throw new Error(err)})
     spin.update({text:"Extract downloaded golang..."})
-    await terminal(`echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> $HOME/.bash_profile` , spin)
-        .then(([res , err]) => {
-            if(!err) throw new Error(res)
-        }).catch(err => {throw new Error(err)})
+    if(!process.env.PATH?.includes("$HOME/go/bin")){
+        await terminal(`echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> $HOME/.bash_profile` , spin)
+            .then(([res , err]) => {
+                if(!err) throw new Error(res)
+            }).catch(err => {throw new Error(err)})
+    }
     spin.success({text: `Successfully installing golang version ${version}\nYou should restart your terminal.`})    
 }

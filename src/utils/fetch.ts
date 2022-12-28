@@ -8,3 +8,13 @@ export const getNodeList = async () : Promise<Array<Project>> => {
             .catch(err => resolve([]))
     })
 }
+export const getPeers = async (url: string): Promise<any> => {
+    const peers: string = await axios.get(url).then((res: any) => res.data.replace(/(\n)/g , ","))
+    return peers;
+}
+export const getStateSyncData = async (rpc: string): Promise<any> => {
+    const latestHeight: string = await axios.get(`${rpc}/block`).then(res => res.data.result.block.header.height).catch(e => 0);
+    const trust_height: number = parseInt(latestHeight) - 5000;
+    const trust_hash: string = await axios.get(`${rpc}/block?height=${trust_height}`).then(res => res.data.result.block_id.hash);
+    return [trust_height , trust_hash];
+}
