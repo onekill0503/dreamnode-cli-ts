@@ -2,3 +2,5 @@ build
 node_modules
 yarn.lock
 test.ts
+src/resources
+yarn-error.log

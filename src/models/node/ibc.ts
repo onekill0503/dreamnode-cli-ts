@@ -1,4 +1,26 @@
 
+class Config {
+    private _configUrl: string;
+    private _appUrl: string;
+
+    constructor(config: string , app: string){
+        this._appUrl = app;
+        this._configUrl = config;
+    }
+    set configUrl(arg: string){
+        this._configUrl = arg;
+    }
+    set appUrl(arg: string){
+        this._appUrl = arg;
+    }
+    get configUrl(): string {
+        return this._configUrl;
+    }
+    get appUrl(): string {
+        return this._appUrl;
+    }
+}
+
 class IBC {
     private _url: string;
     private _branch: string;
@@ -7,8 +29,9 @@ class IBC {
     private _rpc?: string;
     private _dir?: string;
     private _genesis: string;
+    private _config: Config;
 
-    constructor(url: string , branch: string , stateSync:boolean , build: boolean , rpc: string , dir: string , genesis: string){
+    constructor(url: string , branch: string , stateSync:boolean , build: boolean , rpc: string , dir: string , genesis: string , config: Config){
         this._url = url;
         this._branch = branch;
         this._stateSync = stateSync;
@@ -16,6 +39,7 @@ class IBC {
         this._rpc = rpc;
         this._dir = dir;
         this._genesis = genesis;
+        this._config = config;
     }
     set url(arg: string){
         this._url = arg;
@@ -38,6 +62,9 @@ class IBC {
     set genesis(arg: string){
         this._genesis = arg;
     }
+    set config(arg: Config){
+        this._config = arg;
+    }
     get url(): string {
         return this._url;
     }
@@ -55,6 +82,9 @@ class IBC {
     }
     get genesis(): string {
         return this._genesis;
+    }
+    get config(): Config {
+        return this._config;
     }
 }
 export default IBC;
