@@ -9,30 +9,29 @@ export const installGo = async (version: string = "1.9"): Promise<void> => {
     }
     // create loading spinner
     let spin = spinner(`Downloading golang version ${version}...`).start();
-    await terminal(`wget https://golang.org/dl/go${version}.linux-amd64.tar.gz`)
+    await terminal(`wget https://golang.org/dl/go${version}.linux-amd64.tar.gz` , spin)
         .then(([res , err]) => {
             if(!err) throw new Error(res)
         }).catch(err => {throw new Error(err)})
     spin.update({text:"Remove current golang..."})
-    await terminal(`rm -rf /usr/local/go`)
+    await terminal(`rm -rf /usr/local/go` , spin)
         .then(([res , err]) => {
             if(!err) throw new Error(res)
         }).catch(err => {throw new Error(err)})
     spin.update({text:"Installing downloaded golang..."})
-    await terminal(`tar -C /usr/local -xzf "go${version}.linux-amd64.tar.gz"`)
+    await terminal(`tar -C /usr/local -xzf "go${version}.linux-amd64.tar.gz"` , spin)
         .then(([res , err]) => {
             if(!err) throw new Error(res)
         }).catch(err => {throw new Error(err)})
     spin.update({text:"Remove downloaded golang..."})
-    await terminal(`rm "go${version}.linux-amd64.tar.gz"`)
+    await terminal(`rm "go${version}.linux-amd64.tar.gz"` , spin)
         .then(([res , err]) => {
             if(!err) throw new Error(res)
         }).catch(err => {throw new Error(err)})
     spin.update({text:"Extract downloaded golang..."})
-    await terminal(`echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> $HOME/.bash_profile`)
+    await terminal(`echo "export PATH=$PATH:/usr/local/go/bin:$HOME/go/bin" >> $HOME/.bash_profile` , spin)
         .then(([res , err]) => {
             if(!err) throw new Error(res)
         }).catch(err => {throw new Error(err)})
-    spin.success({text: `Successfully installing golang version ${version}\nYou should restart your terminal.`})
-    
+    spin.success({text: `Successfully installing golang version ${version}\nYou should restart your terminal.`})    
 }

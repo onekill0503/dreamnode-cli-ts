@@ -1,6 +1,7 @@
 import { SpawnSyncReturns, spawnSync , spawn, ChildProcess } from 'child_process'
 import { sleep } from '.';
 import chalk from 'chalk';
+import { Spinner } from 'nanospinner';
 
 export const run = async (cmd : string , show: boolean = false) : Promise<[string , boolean]> => {
     return await new Promise(async (resolve , reject) => {
@@ -26,7 +27,7 @@ export const run = async (cmd : string , show: boolean = false) : Promise<[strin
         }
     })
 }
-export const runSpawn = async (cmd : string) : Promise<[string , boolean]> => {
+export const runSpawn = async (cmd : string , spinner?: Spinner) : Promise<[string , boolean]> => {
     return await new Promise(async (resolve , reject) => {
         if(cmd.length > 0){
             let err = false;
@@ -39,10 +40,12 @@ export const runSpawn = async (cmd : string) : Promise<[string , boolean]> => {
             opt.stdout?.setEncoding('utf-8');
             opt.stderr?.setEncoding('utf-8');
             opt.stdout?.on("data" , (data) => {
-                console.log(data);
+                if(spinner) spinner.update({text: chalk.yellow(data)})
+                else console.log(data);
             })
             opt.stderr?.on("data" , (data) => {
-                console.log(data);
+                if(spinner) spinner.update({text: chalk.redBright(data)})
+                else console.log(data);
             })
             opt.on('error' , (err) => {
                 reject(err.message);

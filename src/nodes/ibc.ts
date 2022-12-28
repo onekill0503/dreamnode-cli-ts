@@ -12,7 +12,7 @@ const IBC = async (node: Project): Promise<void> => {
         if(!node.repo.build){
             const spin = createSpinner(chalk.yellow("Downloading Binary...")).start();
             try{
-                await cmd(`wget ${node.repo.url}`)
+                await cmd(`wget ${node.repo.url}` , spin)
                     .then(res => {
                         if(!res[1]) throw new Error(res[0]);
                     })
@@ -22,7 +22,7 @@ const IBC = async (node: Project): Promise<void> => {
                 spin.update({text: chalk.yellow("Extracting File...")})
                 const parseUrl: string[] = node.repo.url.split("/")
                 const tarFileName: string = parseUrl[parseUrl.length-1];
-                await cmd(`tar -xvf ${tarFileName}`)
+                await cmd(`tar -xvf ${tarFileName}` , spin)
                     .then(res => {
                         if(!res[1]) throw new Error(res[0]);
                     })
@@ -32,7 +32,7 @@ const IBC = async (node: Project): Promise<void> => {
                 spin.update({text: chalk.yellow("Installing ...")})
                 const parseDir : string[] | undefined = node.repo.dir?.split("/");
                 const binaryName : string = parseDir ? parseDir[parseDir.length-1] : "";
-                await cmd(`mv ${node.repo.dir} /usr/local/bin/${binaryName} && rm -rf ${tarFileName} && rm -rf ${node.repo.dir}`)
+                await cmd(`mv ${node.repo.dir} /usr/local/bin/${binaryName} && rm -rf ${tarFileName} && rm -rf ${node.repo.dir}` , spin)
                 spin.success({text:chalk.green(`Successfully Installing ${node.name}`)});
                 process.exit(0);
             }catch(err: any) {
