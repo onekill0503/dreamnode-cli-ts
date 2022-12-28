@@ -10,13 +10,13 @@ import NODE from './enums/node'
 
 (async () => {
     await installBasic();
-    const nodeList = await getNodeList();
+    const nodeList: Array<Project> = await getNodeList();
     if(nodeList.length < 1) {
         console.log(chalk.red(`No availble node right now.`))
         process.exit(0);
     }
-    const nodeToMenu = [...nodeList.map(v => v.name)];
-    const nodeChoice = await inquirer.prompt({
+    const nodeToMenu: Array<string> = [...nodeList.map(v => v.name)];
+    const nodeChoice: any = await inquirer.prompt({
         message: `Which node you want to install ?`,
         type: 'list',
         name: 'answer',
