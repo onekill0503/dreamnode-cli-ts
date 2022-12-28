@@ -7,7 +7,7 @@ import { createSpinner } from "nanospinner";
 import chalk from "chalk";
 import { runSpawn as cmd } from "../utils/terminal"
 
-const IBC = async (node: Project): Promise<void> => {
+const IBC = async (node: Project , nodename: string , port: number): Promise<void> => {
     return await new Promise(async (resolve,reject) => {
         if(!node.repo.build){
             const spin = createSpinner(chalk.yellow("Downloading Binary...")).start();
@@ -32,7 +32,14 @@ const IBC = async (node: Project): Promise<void> => {
                 spin.update({text: chalk.yellow("Installing ...")})
                 const parseDir : string[] | undefined = node.repo.dir?.split("/");
                 const binaryName : string = parseDir ? parseDir[parseDir.length-1] : "";
+                const bNArr: string[] = binaryName.split("");
+                bNArr.pop();
+                const nodeDir: string = bNArr.join("");
                 await cmd(`mv ${node.repo.dir} /usr/local/bin/${binaryName} && rm -rf ${tarFileName} && rm -rf ${node.repo.dir}` , spin)
+                spin.update({text: chalk.yellow("Node Initialization...")})
+                await cmd(`${binaryName} config chain-id ${node.chain} && ${binaryName} config keyring-backend test`);
+                await cmd(`${binaryName} init ${nodename} --chain-id ${node.chain}`)
+                await cmd(`curl ${node.repo.genesis} | jq .result.genesis > ~/.${nodeDir}/config/genesis.json`)
                 spin.success({text:chalk.green(`Successfully Installing ${node.name}`)});
                 process.exit(0);
             }catch(err: any) {
