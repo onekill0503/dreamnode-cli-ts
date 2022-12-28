@@ -51,6 +51,9 @@ export const runSpawn = async (cmd : string) : Promise<[string , boolean]> => {
                 if(c) console.log(chalk.yellow(`Process exit with code: ${c}`))
                 if(s) console.log(chalk.yellow(`Process exit with signal: ${s}`))
             });
+            while(opt.exitCode == null){
+                await sleep(2500)
+            }
             // if not return true
             if(err) resolve([`Failed running "${cmd}"`,false])
             else resolve([`Successfully running "${cmd}"`,true]);
