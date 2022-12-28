@@ -3,12 +3,13 @@ import chalk from 'chalk'
 import inquirer from 'inquirer'
 import installBasic from './utils/installs/basic'
 import { getNodeList } from './utils/fetch'
-import { searchValueFromArray as getData } from './utils'
+import { checkUserInfo, searchValueFromArray as getData } from './utils'
 import Project from './models/project'
 import ibc from './nodes/ibc'
 import NODE from './enums/node'
 
 (async () => {
+    await checkUserInfo();
     await installBasic();
     const nodeList: Array<Project> = await getNodeList();
     if(nodeList.length < 1) {
@@ -30,7 +31,12 @@ import NODE from './enums/node'
     // switch case for selected node
     switch(nodeData?.node_type){
         case NODE.IBC:
-            await ibc(nodeData)
+            const port = await inquirer.prompt({
+                type: 'number',
+                name: 'answer',
+                message: 'please input node port : '
+            });
+            await ibc(nodeData , process.env.NODENAME || 'whoami' , port.answer)
         default:
             console.log(chalk.red(`No option for selected node !`))
             process.exit(0);

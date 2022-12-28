@@ -9,6 +9,7 @@
   "scripts": {
     "start": "nodemon --watch 'src/**/*.ts' --exec \"npx ts-node \" src/index.ts",
     "create": "yarn build",
+    "dev": "npx ts-node src/index.ts",
     "build": "npx tsc -p .",
     "local": "sudo npm i -g && dreamnode-cli",
     "refresh": "rm -rf ./node_modules ./package-lock.json && yarn install"
