@@ -114,8 +114,8 @@ const IBC = async (node: Project , nodename: string , port: number): Promise<voi
         await cmd(`cp $HOME/.${nodeDir}/config/config.toml $HOME/.${nodeDir}/config/config.toml.backup`)
         // configuration server
         spin.update({text: chalk.yellow("Configuration Node ...")})
-        await configureNodeConfig("$HOME/.${nodeDir}/config/config.toml" , node , port);
-        await configureNodeApp("$HOME/.${nodeDir}/config/app.toml" , node);
+        await configureNodeConfig(`$HOME/.${nodeDir}/config/config.toml` , node , port);
+        await configureNodeApp(`$HOME/.${nodeDir}/config/app.toml` , node);
         spin.update({text: chalk.yellow("Create Node Service...")})
         const createServiceRes: any = await createService(binaryName , nodeDir);
         if(!createServiceRes){
