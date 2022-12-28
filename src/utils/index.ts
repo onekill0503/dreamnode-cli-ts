@@ -46,7 +46,7 @@ export const checkUserInfo = async (): Promise<void> => {
 }
 export const readToml = async (file: string): Promise<any> => {
     if(!(fs.existsSync(path.join(file)))) return false;
-    const tomlData: string = await fs.readFileSync(path.join(__dirname , file) , {
+    const tomlData: string = await fs.readFileSync(path.join(file) , {
         encoding: 'utf-8'
     });
     const tomlJson = toml.parse(tomlData);
