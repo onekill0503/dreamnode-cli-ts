@@ -1,5 +1,5 @@
 
-import { run as terminal } from '../terminal'
+import { runSpawn as terminal } from '../terminal'
 import {  validate } from 'compare-versions'
 import { createSpinner as spinner } from "nanospinner";
 

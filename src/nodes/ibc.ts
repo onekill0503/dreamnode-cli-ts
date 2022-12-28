@@ -5,7 +5,7 @@ import { isDepedencyInstalled } from "../utils/validation";
 import isValidVersion from "../utils/version/golang";
 import { createSpinner } from "nanospinner";
 import chalk from "chalk";
-import { run as cmd } from "../utils/terminal"
+import { runSpawn as cmd } from "../utils/terminal"
 
 const IBC = async (node: Project): Promise<void> => {
     return await new Promise(async (resolve,reject) => {

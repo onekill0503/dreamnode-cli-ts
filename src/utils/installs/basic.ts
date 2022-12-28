@@ -1,4 +1,4 @@
-import { run as terminal } from "../terminal";
+import { runSpawn as terminal } from "../terminal";
 import { createSpinner as spinner} from 'nanospinner'
 
 const install = async () => {

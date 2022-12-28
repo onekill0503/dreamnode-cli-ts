@@ -8,3 +8,6 @@ export const searchValueFromArray = (
         if(d[attr] == k) return d;
     })[0];
 }
+export const sleep = async (T: number): Promise<void> => {
+    return new Promise(resolve => setTimeout(resolve, T));
+}
