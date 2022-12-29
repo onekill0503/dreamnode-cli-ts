@@ -90,7 +90,7 @@ const IBC = async (node: Project , nodename: string , port: number): Promise<voi
                 process.exit(0);
             }
         }else{
-            const depedencyReady: any = await isDepedencyInstalled('go' , "1.9" , isValidVersion)
+            const depedencyReady: any = await isDepedencyInstalled('go' , "1.9")
                 .then(res => res)
                 .catch(async (err: depedencyError) => {
                     return err;
@@ -105,7 +105,7 @@ const IBC = async (node: Project , nodename: string , port: number): Promise<voi
                         name: 'answer'
                     });
                     if(installQ.answer){
-                        await install();
+                        await install(spin);
                     }
                 }
             }

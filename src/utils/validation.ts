@@ -1,10 +1,13 @@
 import { SpawnSyncReturns , spawnSync } from "child_process";
 import depedencyError from "../errors/depedencyError";
-import { installGo } from "./installs/golang";
+import { getDepedencyInstallation, getDepedencyVersionValidation } from ".";
 
-export const isDepedencyInstalled = async (program : string ,version: boolean | string = false , versionValidation: Function | undefined): Promise<any> => {
+export const isDepedencyInstalled = async (program : string ,version: boolean | string = false): Promise<any> => {
     if(program.length < 1) return false;
     return await new Promise(async (resolve , reject) => {
+        // getting installation function if get error
+        const installation: Function | undefined = getDepedencyInstallation(program);
+        const versionValidation: Function = getDepedencyVersionValidation(program);
         let opt :  SpawnSyncReturns<string> | undefined;
         let isFail : boolean;
         if(process.platform == 'win32'){
@@ -15,16 +18,14 @@ export const isDepedencyInstalled = async (program : string ,version: boolean | 
             isFail = (opt?.stdout == '');
         }
         if(version && !isFail){
-            if(versionValidation){
-                try{
-                    versionValidation(opt,version);
-                }catch(err: depedencyError | any){
-                    reject(err)
-                }
+            try{
+                versionValidation(opt,version);
+            }catch(err: depedencyError | any){
+                reject(err)
             }
         }
         if(isFail){
-            reject(new depedencyError(`no ${program} on this computer, you need to install it first` , true , installGo))
+            reject(new depedencyError(`no ${program} on this computer, you need to install it first` , (installation == undefined) ? false : true , installation))
         }
         resolve(true)
     })

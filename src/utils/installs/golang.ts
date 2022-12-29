@@ -1,14 +1,14 @@
 
 import { runSpawn as terminal } from '../terminal'
 import {  validate } from 'compare-versions'
-import { createSpinner as spinner } from "nanospinner";
+import { Spinner, createSpinner as spinner } from "nanospinner";
 
-export const installGo = async (version: string = "1.9"): Promise<void> => {
+export const installGo = async (spin: Spinner ,version: string = "1.9"): Promise<void> => {
     if(!validate(version)){
         throw new Error(`Invalid Version`);
     }
     // create loading spinner
-    let spin = spinner(`Downloading golang version ${version}...`).start();
+    spin.update({text:(`Downloading golang version ${version}...`)})
     await terminal(`wget https://golang.org/dl/go${version}.linux-amd64.tar.gz` , spin)
         .then(([res , err]) => {
             if(!err) throw new Error(res)

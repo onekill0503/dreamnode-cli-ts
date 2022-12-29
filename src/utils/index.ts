@@ -4,6 +4,9 @@ import chalk from "chalk";
 import toml from 'toml';
 import fs from 'fs'
 import path from "path";
+import DEPEDENCY from "../enums/depedency";
+import { installGo } from "./installs/golang";
+import isValidVersion from "./version/golang";
 const json2toml = require('json2toml');
 
 export const searchValueFromArray = (
@@ -54,4 +57,20 @@ export const readToml = async (file: string): Promise<any> => {
 }
 export const writeToml = async (target: string , data: any) : Promise<void> => {
     await fs.writeFileSync(path.join(target) , json2toml(data));
+}
+export const getDepedencyInstallation = (program: string): Function | undefined => {
+    switch(program){
+        case DEPEDENCY.GO :
+            return installGo;
+        default:
+            return undefined;
+    }
+}
+export const getDepedencyVersionValidation = (program: string): Function => {
+    switch(program){
+        case DEPEDENCY.GO :
+            return isValidVersion;
+        default:
+            return (() => {});
+    }
 }
