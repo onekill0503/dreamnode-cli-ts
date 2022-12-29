@@ -53,6 +53,8 @@ export const runSpawn = async (cmd : string , spinner?: Spinner) : Promise<[stri
             opt.on('exit' , (c , s) => {
                 if(c) console.log(chalk.yellow(`Process exit with code: ${c}`))
                 if(s) console.log(chalk.yellow(`Process exit with signal: ${s}`))
+                let code: number = c || 0;
+                err = ((code > 0) ? true : err)
             });
             while(opt.exitCode == null){
                 await sleep(2500)
