@@ -9,6 +9,7 @@ import axios from "axios";
 import { readToml, writeToml } from "../utils";
 import { getPeers } from "../utils/fetch";
 import { install as stateSync } from "../utils/installs/stateSync";
+import { existsSync } from "fs";
 
 const configureNodeConfig = async (file: string , node: Project , port: number) : Promise<void> => {
     let tomlData = await readToml(file);
@@ -139,6 +140,9 @@ const IBC = async (node: Project , nodename: string , port: number): Promise<voi
             spin.update({text: chalk.yellow("Node Initialization...")})
             await cmd(`${binaryName} config chain-id ${node.chain} && ${binaryName} config keyring-backend test` , spin);
             await cmd(`${binaryName} init ${nodename} --chain-id ${node.chain}`)
+            if(existsSync(`~/.${nodeDir}/config/genesis.json`)){
+                await cmd(`rm -rf ~/.${nodeDir}/config/genesis.json`);
+            }
             await cmd(`curl ${node.repo.genesis} | jq .result.genesis > ~/.${nodeDir}/config/genesis.json` , spin)
             await cmd(`cp $HOME/.${nodeDir}/config/config.toml $HOME/.${nodeDir}/config/config.toml.backup`)
             // configuration server
