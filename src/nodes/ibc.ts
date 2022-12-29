@@ -2,7 +2,6 @@ import inquirer from "inquirer";
 import depedencyError from "../errors/depedencyError";
 import Project from "../models/project";
 import { isDepedencyInstalled } from "../utils/validation";
-import isValidVersion from "../utils/version/golang";
 import { createSpinner } from "nanospinner";
 import chalk from "chalk";
 import { runSpawn as cmd } from "../utils/terminal"
@@ -13,11 +12,11 @@ import { install as stateSync } from "../utils/installs/stateSync";
 
 const configureNodeConfig = async (file: string , node: Project , port: number) : Promise<void> => {
     let tomlData = await readToml(file);
-    if(tomlData == '') throw new Error(`Failed read config.toml`)
+    if(!tomlData) throw new Error(`Failed read config.toml`)
     tomlData.p2p.persistent_peers = await getPeers(node.peers);
     tomlData.rpc.laddr = `tcp://0.0.0.0:${port}`;
     tomlData.rpc.cors_allowed_origins = ["*"]
-    const newConfig = await axios.get(node.repo.config.configUrl)
+    const newConfig: any = await axios.get(node.repo.config.configUrl)
         .then(res => {
             if(res?.data) return res.data
             else return {};
@@ -30,8 +29,8 @@ const configureNodeConfig = async (file: string , node: Project , port: number) 
 }
 const configureNodeApp = async (file: string , node: Project) : Promise<void> => {
     let appData = await readToml(file);
-    if(appData == '') throw new Error(`Failed read app.toml`)
-    const newConfig = await axios.get(node.repo.config.configUrl)
+    if(!appData) throw new Error(`Failed read app.toml`)
+    const newConfig: any = await axios.get(node.repo.config.configUrl)
         .then(res => {
             if(res?.data) return res.data
             else return {};
