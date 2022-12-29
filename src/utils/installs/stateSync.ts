@@ -11,7 +11,7 @@ export const install = async (node: Project ,binary: string , nodeDir: string , 
     const [trust_height , trust_hash] = await getStateSyncData(rpcUrl);
     const tomlData = await readToml(`${process.env.HOME}/.${nodeDir}/config/config.toml`);
     // load and update config.toml
-    if(tomlData == '') throw new Error(`Can't Read config.toml`);
+    if(tomlData) throw new Error(`Can't Read config.toml`);
     tomlData.statesync.enable = true;
     tomlData.statesync.trust_hash = trust_hash;
     tomlData.statesync.trust_height = trust_height;
