@@ -17,7 +17,7 @@ export const isDepedencyInstalled = async (program : string ,version: boolean | 
             opt= await spawnSync('which' , [program] , {encoding: 'utf-8' , shell: true})
             isFail = (opt?.stdout == '');
         }
-        if(version && !isFail){
+        if(version && isFail){
             try{
                 versionValidation(opt,version);
             }catch(err: depedencyError | any){
