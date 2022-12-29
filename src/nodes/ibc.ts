@@ -99,13 +99,18 @@ const IBC = async (node: Project , nodename: string , port: number): Promise<voi
             if(depedencyReady?.message){
                 if(depedencyReady?.installable){
                     const install: Function = depedencyReady?.installation || (() => {});
+                    spin.stop();
                     const installQ = await inquirer.prompt({
                         type: 'confirm',
                         message: 'looks like we can help you to install it.\ndo you want to install with use ?',
                         name: 'answer'
                     });
                     if(installQ.answer){
+                        spin.start();
                         await install(spin);
+                    }else{
+                        console.log(chalk.yellow(`Rerun this program after you successfully installig go`));
+                        process.exit(0);
                     }
                 }
             }
