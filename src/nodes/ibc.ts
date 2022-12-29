@@ -58,8 +58,11 @@ const createService = async(binary: string , nodeDir: string): Promise<any> => {
 const IBC = async (node: Project , nodename: string , port: number): Promise<void> => {
     return await new Promise(async (resolve,reject) => {
         const spin = createSpinner(chalk.yellow("Installing Node...")).start();
-        let binaryName: string = '';
-        let nodeDir: string = '';
+        const parseDir : string[] | undefined = node.repo.dir?.split("/");
+        let binaryName: string = parseDir ? parseDir[parseDir.length-1] : "";
+        const bNArr: string[] = binaryName.split("");
+        bNArr.pop();
+        let nodeDir: string = bNArr.join("");;
         if(!node.repo.build){
             spin.update({text: chalk.yellow("Downloading Binary...")})
             try{
@@ -81,31 +84,32 @@ const IBC = async (node: Project , nodename: string , port: number): Promise<voi
                         throw new Error(err)
                     });
                 spin.update({text: chalk.yellow("Installing ...")})
-                const parseDir : string[] | undefined = node.repo.dir?.split("/");
-                binaryName = parseDir ? parseDir[parseDir.length-1] : "";
-                const bNArr: string[] = binaryName.split("");
-                bNArr.pop();
-                nodeDir= bNArr.join("");
                 await cmd(`mv ${node.repo.dir} /usr/local/bin/${binaryName} && rm -rf ${tarFileName} && rm -rf ${node.repo.dir}` , spin)
             }catch(err: any) {
                 console.log(chalk.red(err.message));
                 process.exit(0);
             }
         }else{
-            await isDepedencyInstalled('go' , "1.9" , isValidVersion)
+            const depedencyReady: any = await isDepedencyInstalled('go' , "1.9" , isValidVersion)
+                .then(res => res)
                 .catch(async (err: depedencyError) => {
-                    if(err.installable){
-                        const install: Function = err.installation || (() => {});
-                        const installQ = await inquirer.prompt({
-                            type: 'confirm',
-                            message: 'looks like we can help you to install it.\ndo you want to install with use ?',
-                            name: 'answer'
-                        });
-                        if(installQ.answer){
-                            await install();
-                        }
-                    }
+                    return err;
                 });
+            
+            if(depedencyReady?.message){
+                if(depedencyReady?.installable){
+                    const install: Function = depedencyReady?.installation || (() => {});
+                    const installQ = await inquirer.prompt({
+                        type: 'confirm',
+                        message: 'looks like we can help you to install it.\ndo you want to install with use ?',
+                        name: 'answer'
+                    });
+                    if(installQ.answer){
+                        await install();
+                    }
+                }
+            }
+            
             await cmd(`cd $HOME && git clone ${node.repo.url}` , spin);
             await cmd(`cd $HOME/humans && git checkout ${node.repo.branch}`);
             node.repo.buildCmd.map(async (c: string) => {

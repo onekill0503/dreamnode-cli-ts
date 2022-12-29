@@ -1,7 +1,8 @@
 import { SpawnSyncReturns , spawnSync } from "child_process";
 import depedencyError from "../errors/depedencyError";
+import { installGo } from "./installs/golang";
 
-export const isDepedencyInstalled = async (program : string ,version: boolean | string = false , versionValidation: Function | undefined): Promise<boolean> => {
+export const isDepedencyInstalled = async (program : string ,version: boolean | string = false , versionValidation: Function | undefined): Promise<any> => {
     if(program.length < 1) return false;
     return await new Promise(async (resolve , reject) => {
         let opt :  SpawnSyncReturns<string> | undefined;
@@ -23,7 +24,7 @@ export const isDepedencyInstalled = async (program : string ,version: boolean | 
             }
         }
         if(isFail){
-            reject(`no ${program} on this computer, you need to install it first`)
+            reject(new depedencyError(`no ${program} on this computer, you need to install it first` , true , installGo))
         }
         resolve(true)
     })
