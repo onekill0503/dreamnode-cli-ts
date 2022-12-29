@@ -120,11 +120,17 @@ const IBC = async (node: Project , nodename: string , port: number): Promise<voi
             await cmd(`cd $HOME && git clone ${node.repo.url}` , spin);
             await cmd(`cd $HOME/humans && git checkout ${node.repo.branch}`);
             node.repo.buildCmd.map(async (c: string) => {
-                let installNodeCmd = await cmd(c , spin);
-                if(installNodeCmd[1]){
-                    console.log(installNodeCmd[0]);
-                    process.exit(0);
-                }
+                await cmd(c , spin)
+                    .then(([msg , err] : any) => {
+                        if(err){
+                            console.log(msg);
+                            process.exit(0);
+                        };
+                    })
+                    .catch((err: string) => {
+                        console.log(err);
+                        process.exit(0);
+                    })
             });
         }
         try{
