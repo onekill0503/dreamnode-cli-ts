@@ -31,7 +31,11 @@ export const installGo = async (spin: Spinner ,version: string = "1.9"): Promise
         }).catch(err => {throw new Error(err)})
     spin.update({text:chalk.yellow("Extract downloaded golang...")})
     if(!process.env.PATH?.includes("$HOME/go/bin")){
-        await terminal(`echo "export PATH=${process.env.PATH}:/usr/local/go/bin:$HOME/go/bin" >> $HOME/.bash_profile` , spin)
+        const path: string = process.env.PATH || '';
+        const d: string = path.split(":").filter((p: string) => {
+            if(!p.includes('node_modules')) return p;
+        }).join(":");
+        await terminal(`echo "export PATH=${d}:/usr/local/go/bin:$HOME/go/bin" >> $HOME/.bash_profile` , spin)
             .then(([res , err]) => {
                 if(!err) throw new Error(res)
             }).catch(err => {throw new Error(err)})
