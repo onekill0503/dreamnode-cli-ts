@@ -33,7 +33,7 @@ export const installGo = async (spin: Spinner ,version: string = "1.9"): Promise
     if(!process.env.PATH?.includes("$HOME/go/bin")){
         const path: string = process.env.PATH || '';
         const d: string = path.split(":").filter((p: string) => {
-            if(!p.includes('node_modules')) return p;
+            if(!p.includes('node_modules') || !p.includes('tmp')) return p;
         }).join(":");
         await terminal(`echo "export PATH=${d}:/usr/local/go/bin:$HOME/go/bin" >> $HOME/.bash_profile` , spin)
             .then(([res , err]) => {

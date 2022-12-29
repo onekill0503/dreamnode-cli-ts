@@ -120,17 +120,20 @@ const IBC = async (node: Project , nodename: string , port: number): Promise<voi
             await cmd(`cd $HOME && git clone ${node.repo.url}` , spin);
             await cmd(`cd $HOME/humans && git checkout ${node.repo.branch}`);
             node.repo.buildCmd.map(async (c: string) => {
-                await cmd(c , spin)
-                    .then(([msg , err] : any) => {
-                        if(err){
-                            console.log(msg);
-                            process.exit(0);
-                        };
-                    })
-                    .catch((err: string) => {
-                        console.log(err);
-                        process.exit(0);
-                    })
+                try{
+                    await cmd(c , spin)
+                        .then(([msg , success] : any) => {
+                            if(!success){
+                                throw new Error(msg);
+                            };
+                        })
+                        .catch((err: string) => {
+                            throw new Error(err);
+                        })
+                }catch(err: any){
+                    console.log(chalk.red(err.message));
+                    process.exit(1);
+                }
             });
         }
         try{
