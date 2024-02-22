@@ -1,6 +1,6 @@
 {
   "name": "dreamnode-cli",
-  "version": "1.0.3-alpha",
+  "version": "1.0.4-alpha",
   "description": "",
   "main": "./dist/index.js",
   "type": "commonjs",
@@ -14,8 +14,13 @@
     "refresh": "rm -rf ./node_modules ./package-lock.json && yarn install",
     "publish": "npx tsc -p . && npm publish"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/onekill0503/dreamnode-cli-ts.git"
+  },
+  "author": "AlwaysBeDream",
+  "homepage": "https://github.com/onekill0503/dreamnode-cli-ts#readme",
   "keywords": [],
-  "author": "",
   "license": "ISC",
   "dependencies": {
     "@types/node": "^18.11.17",
